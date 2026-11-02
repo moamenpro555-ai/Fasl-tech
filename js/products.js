@@ -1,7 +1,8 @@
 /* ===== صفحة المنتجات: بحث + فلترة + ترتيب ===== */
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
   const params = new URLSearchParams(location.search);
   const qInput = document.getElementById("q");
+  const listBox = document.getElementById("list");
   qInput.value = params.get("q") || "";
 
   document.getElementById("catFilters").innerHTML = CATEGORIES.map(c =>
@@ -13,13 +14,17 @@ document.addEventListener("DOMContentLoaded", () => {
     if (r) r.checked = true;
   }
 
+  showLoading(listBox, "جاري تحميل المنتجات... (أول مرة قد تستغرق نصف دقيقة)");
+  let all = [];
+  try { all = await fetchProducts(); } catch (e) { showError(listBox, e); return; }
+
   function render() {
     const q = qInput.value.trim().toLowerCase();
     const cat = document.querySelector("input[name=cat]:checked").value;
     const type = document.querySelector("input[name=type]:checked").value;
     const sort = document.getElementById("sort").value;
 
-    let list = getStoreProducts().filter(p =>
+    let list = all.filter(p =>
       (!q || (p.name + " " + p.desc).toLowerCase().includes(q)) &&
       (!cat || p.cat === cat) &&
       (!type || (type === "free" ? p.price === 0 : p.price > 0)));
@@ -29,7 +34,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (sort === "low") list.sort((a, b) => a.price - b.price);
     if (sort === "high") list.sort((a, b) => b.price - a.price);
 
-    document.getElementById("list").innerHTML = list.length
+    listBox.innerHTML = list.length
       ? list.map(productCard).join("")
       : `<div class="empty" style="grid-column:1/-1">لا توجد منتجات مطابقة 🔎</div>`;
   }

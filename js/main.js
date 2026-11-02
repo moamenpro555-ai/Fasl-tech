@@ -1,33 +1,26 @@
 /* ===== FASL TECH - الدوال المشتركة بين كل الصفحات ===== */
 
-const KEYS = {
-  cart: "fasl_cart", wish: "fasl_wish", user: "fasl_user",
-  users: "fasl_users", orders: "fasl_orders", products: "fasl_products",
-  downloads: "fasl_downloads"
-};
+const KEYS = { cart: "fasl_cart", wish: "fasl_wish", user: "fasl_user" };
 
-/* ---------- التخزين (localStorage) ---------- */
+/* ---------- التخزين المحلي (السلة والمفضلة فقط) ---------- */
 function load(key, def) {
   try { const v = JSON.parse(localStorage.getItem(key)); return v === null ? def : v; }
   catch (e) { return def; }
 }
 function save(key, value) { localStorage.setItem(key, JSON.stringify(value)); }
 
-function getProducts() { return load(KEYS.products, DEFAULT_PRODUCTS); }
-function getStoreProducts() { return getProducts().filter(p => p.published); }
-function getProduct(id) { return getProducts().find(p => p.id === Number(id)); }
 function getUser() { return load(KEYS.user, null); }
 function discount(p) { return p.old ? Math.round((1 - p.price / p.old) * 100) : 0; }
 function money(n) { return n === 0 ? "مجاني" : n + " جنيه"; }
 function catName(key) { const c = CATEGORIES.find(c => c.key === key); return c ? c.name : key; }
+function esc(s) { return String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])); }
+function fmtDate(d) { return new Date(d).toLocaleString("ar-EG"); }
 
 /* ---------- السلة والمفضلة ---------- */
 function getCart() { return load(KEYS.cart, []); }
 function addToCart(id) {
   const cart = getCart();
   if (cart.includes(id)) { toast("المنتج موجود بالفعل في السلة"); return; }
-  const user = getUser();
-  if (user && ownedIds(user.email).includes(id)) { toast("أنت تملك هذا المنتج بالفعل"); return; }
   cart.push(id); save(KEYS.cart, cart); updateCounts(); toast("تمت الإضافة إلى السلة ✔");
 }
 function removeFromCart(id) { save(KEYS.cart, getCart().filter(i => i !== id)); updateCounts(); }
@@ -39,17 +32,12 @@ function toggleWish(id, btn) {
   if (btn) btn.classList.toggle("on", w.includes(id));
 }
 
-/* المنتجات التي اشتراها العميل (الطلبات المكتملة فقط) */
-function ownedIds(email) {
-  return load(KEYS.orders, []).filter(o => o.user === email && o.status === "done").flatMap(o => o.items);
-}
-
 /* ---------- إشعار صغير ---------- */
 function toast(msg) {
   let t = document.querySelector(".toast");
   if (!t) { t = document.createElement("div"); t.className = "toast"; document.body.appendChild(t); }
   t.textContent = msg; t.classList.add("show");
-  clearTimeout(t._timer); t._timer = setTimeout(() => t.classList.remove("show"), 2200);
+  clearTimeout(t._timer); t._timer = setTimeout(() => t.classList.remove("show"), 2600);
 }
 
 /* ---------- بطاقة المنتج ---------- */
@@ -63,8 +51,8 @@ function productCard(p) {
       ${p.icon}
     </div>
     <div class="card-body">
-      <h3><a href="product.html?id=${p.id}">${p.name}</a></h3>
-      <p>${p.desc}</p>
+      <h3><a href="product.html?id=${p.id}">${esc(p.name)}</a></h3>
+      <p>${esc(p.desc)}</p>
       <div class="rating"><b>★ ${p.rating}</b> (${p.reviews})</div>
       <div class="price-row">
         <div><span class="price ${p.price === 0 ? "free" : ""}">${money(p.price)}</span> ${p.old ? `<span class="old">${p.old} جنيه</span>` : ""}</div>
@@ -102,7 +90,7 @@ function renderHeader() {
     <div class="header-icons">
       <a href="cart.html" aria-label="السلة">🛒<span class="badge" id="cartCount">0</span></a>
       <a href="account.html#wish" aria-label="المفضلة">♡<span class="badge" id="wishCount">0</span></a>
-      <a href="${user ? "account.html" : "login.html"}" class="account-link">👤 ${user ? user.name : "حسابي"}</a>
+      <a href="${user ? "account.html" : "login.html"}" class="account-link">👤 ${user ? esc(user.name) : "حسابي"}</a>
     </div>
   </div></header>`;
 

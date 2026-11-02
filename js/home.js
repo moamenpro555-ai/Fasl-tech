@@ -1,10 +1,6 @@
 /* ===== الصفحة الرئيسية ===== */
-document.addEventListener("DOMContentLoaded", () => {
-  // أكثر المنتجات مبيعًا (أول 3 حسب عدد المبيعات)
-  const best = getStoreProducts().sort((a, b) => b.sales - a.sales).slice(0, 3);
-  document.getElementById("bestSellers").innerHTML = best.map(productCard).join("");
-
-  // التصنيفات
+document.addEventListener("DOMContentLoaded", async () => {
+  // التصنيفات (ثابتة)
   document.getElementById("catsGrid").innerHTML = CATEGORIES.map(c =>
     `<a class="cat-item" href="products.html?cat=${c.key}"><span>${c.icon}</span>${c.name}</a>`).join("");
 
@@ -19,4 +15,12 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("tPrev").onclick = () => { i = (i - 1 + TESTIMONIALS.length) % TESTIMONIALS.length; showTesti(); };
   showTesti();
   setInterval(() => { i = (i + 1) % TESTIMONIALS.length; showTesti(); }, 6000);
+
+  // أكثر المنتجات مبيعًا من الـ API
+  const box = document.getElementById("bestSellers");
+  showLoading(box, "جاري تحميل المنتجات... (أول مرة قد تستغرق نصف دقيقة)");
+  try {
+    const products = await fetchProducts();
+    box.innerHTML = products.slice(0, 3).map(productCard).join("");
+  } catch (e) { showError(box, e); }
 });
