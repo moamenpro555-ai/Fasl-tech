@@ -1,0 +1,1 @@
+window.FT_PRODUCT={"id": "certificate-designer", "name": "مصمم الشهادات", "en": "Certificate Designer", "tagline": "شهادات تقدير وتفوق باسم كل طالب بأربع تصميمات جاهزة للطباعة.", "modules": ["certs", "students", "groups", "join"], "version": "1.0", "runnerBase": "https://moamenpro555-ai.github.io/Fasl-tech/runner/", "sharing": false};
