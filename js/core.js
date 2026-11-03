@@ -253,7 +253,7 @@
     f.contentDocument.write(`<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>${FT.esc(title || FT.cfg.name)}</title><style>${css}</style></head><body>${html}</body></html>`);
     f.contentDocument.close();
     const go = () => { try { f.contentWindow.focus(); f.contentWindow.print(); } catch (e) { FT.toast("تعذّرت الطباعة", "bad"); } };
-    setTimeout(go, 350);
+    const rdy = f.contentDocument.fonts ? f.contentDocument.fonts.ready : Promise.resolve(); Promise.race([rdy, new Promise(r => setTimeout(r, 3500))]).then(() => setTimeout(go, 400));
   };
   FT.printCSS = `
   *{box-sizing:border-box}body{font-family:'IBM Plex Sans Arabic','Cairo','Segoe UI',Tahoma,'DejaVu Sans',sans-serif;color:#111;margin:0;font-size:12.5pt;line-height:1.6;-webkit-print-color-adjust:exact;print-color-adjust:exact}

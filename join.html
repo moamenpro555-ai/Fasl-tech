@@ -1,0 +1,15 @@
+<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>تسجيل طالب</title>
+<style>*{box-sizing:border-box}body{margin:0;background:#eef1f8;font-family:'IBM Plex Sans Arabic',Cairo,Tahoma,sans-serif;color:#0f1c3a}.w{max-width:460px;margin:0 auto;padding:18px}.h{background:#0f1c3a;color:#fff;border-radius:18px;padding:22px;text-align:center;margin-bottom:14px}.h h1{margin:0 0 4px;font-size:22px;color:#f5b942}.h p{margin:0;opacity:.85}.c{background:#fff;border-radius:18px;padding:18px;box-shadow:0 2px 14px #0f1c3a14}label{display:block;font-weight:600;font-size:14px;margin:12px 0 5px}input,select{width:100%;padding:13px;border:1.5px solid #cfd6e6;border-radius:12px;font:inherit;font-size:16px}input:focus,select:focus{outline:0;border-color:#c98412}button{width:100%;margin-top:18px;padding:15px;border:0;border-radius:12px;background:#c98412;color:#fff;font:inherit;font-weight:700;font-size:17px;cursor:pointer}small{display:block;margin-top:12px;color:#667;text-align:center}</style></head><body><div class="w"><div class="h"><h1 id="t">تسجيل طالب</h1><p id="s"></p></div><div class="c" id="f"></div></div>
+<script>
+var d={};try{var h=location.hash.slice(1).replace(/-/g,"+").replace(/_/g,"/");while(h.length%4)h+="=";d=JSON.parse(decodeURIComponent(escape(atob(h))))}catch(e){}
+var E=function(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})};
+document.getElementById("t").textContent="تسجيل طالب جديد";document.getElementById("s").textContent=((d.n||"")+" "+(d.s?"— "+d.s:"")).trim();
+var f=document.getElementById("f");
+if(!d.g||!d.g.length){f.innerHTML="<p style='text-align:center'>الرابط غير صالح، اطلب رابط جديد من المدرس.</p>"}else{
+f.innerHTML='<label>اسم الطالب بالكامل *</label><input id="n" autocomplete="name"><label>المجموعة *</label><select id="g">'+d.g.map(function(x){return'<option value="'+E(x[0])+'">'+E(x[1])+"</option>"}).join("")+'</select><label>موبايل الطالب</label><input id="p" type="tel" inputmode="tel"><label>اسم ولي الأمر</label><input id="pn"><label>موبايل ولي الأمر</label><input id="pp" type="tel" inputmode="tel"><button id="b">إرسال البيانات للمدرس على واتساب</button><small>هيتفتح واتساب برسالة جاهزة، اضغط إرسال بس.</small>';
+document.getElementById("b").onclick=function(){var v=function(i){return document.getElementById(i).value.trim()};if(!v("n"))return alert("اكتب اسمك");
+var o={n:v("n"),g:v("g"),p:v("p"),pn:v("pn"),pp:v("pp")},gn=document.getElementById("g").selectedOptions[0].text;
+var code=btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
+var msg="تسجيل طالب جديد ✅\nالاسم: "+o.n+"\nالمجموعة: "+gn+"\nموبايل الطالب: "+(o.p||"—")+"\nولي الأمر: "+(o.pn||"—")+" / "+(o.pp||"—")+"\nFTJ:"+code;
+location.href="https://wa.me/"+(d.w||"")+"?text="+encodeURIComponent(msg)}}
+</script></body></html>
